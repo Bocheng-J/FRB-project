@@ -17,8 +17,8 @@ Vs1 = A*sin(2*pi*f*t);
 % plot
 figure(1);
 plot(t.*1000,Vs1);              % times 1000 to change the unit from s to ms
-str_title1 = sprintf('Input Vs1, f = %d Hz, A = %d V',f, A);
-title(str_title1);
+str_title2 = sprintf('Input Vs1, f = %dHz, A = %dV',f, A);
+title(str_title2);
 %axis([-inf,+inf,-1,+1]);
 xlabel('t/ms');
 ylabel('amplitude/V');
@@ -37,19 +37,32 @@ noise = sqrt(noisePower_Lin)*randn(1,N);    % generate noise signal
 A1_Out = Vs1+noise;                 % add noise to signal
 
 
-
-G1_Lin = 10^(G1/20); % convert voltage gain from dB to linear
-
-A1_Out = A1_Out.* G1_Lin;           % Output of amplifier A1
-
-% plot
 figure(2);
-plot(t.*1000,A1_Out);            % times 1000 to change the unit from s to ms
-str_title2 = sprintf('Vs1 after amplifier A1, with G = %d dB, Ph1 = %d and Vn1 = %d dB', G1, Ph1, Vn1);
-title(str_title2);
+plot(t.*1000, A1_Out);
+title('signal with a %ddB noise', Vn1);
 xlabel('t/ms');
 ylabel('amplitude/V');
 
+G1_Lin = 10^(G1/20); % convert voltage gain from dB to linear
+
+A1_Out = A1_Out.* G1_Lin;           % 
+% 
+% A1_Out = Vs1.*G1_Lin;
+% A1_Out = awgn(A1_Out,SNR);
+% 
+% plot
+figure(3);
+plot(t.*1000,A1_Out);            % times 1000 to change the unit from s to ms
+str_title2 = sprintf('Vs1 after amplifier A1, with G = %d dB, Ph1 = %d dB and Vn1 = %d dB', G1, Ph1, Vn1);
+title(str_title2);
+%axis([-inf,+inf,-1,+1]);
+xlabel('t/ms');
+ylabel('amplitude/V');
+
+% figure(4);
+% Vs1 = A*sin(2*pi*f*t+phase);
+% Vs1 = awgn(Vs1,16, 'measured', 'db');
+% plot(t.*1000, Vs1);
 
 
 
