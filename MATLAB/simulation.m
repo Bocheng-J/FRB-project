@@ -7,9 +7,12 @@ clc;
 N=1000;                         % number of samples
 tscale= 0.05;                   % the length of time displayed on the x-axis, unit in second
 dt=tscale/N;                    % time interval of each sampling point
-t=0:dt:(N-1)*dt;        
-f=100;                          % frequency of Vs1 in Hz
+%t=0:dt:(N-1)*dt;        
+f=1000;                          % frequency of Vs1 in Hz
 A=10;                            % amplitude of Vs1
+%Vs1 = A*sin(2*pi*f*t);
+
+fs=100000; N=4096; n=0:N-1; t=n/fs; fr=n*fs/N;
 Vs1 = A*sin(2*pi*f*t);
 % x1 = max(Vs1)./sqrt(2);         % root mean square of Vs1
 % Vs1 = Vs1./x1;                  % normalize Vs0
@@ -56,20 +59,23 @@ plot(t.*1000,A1_Out);            % times 1000 to change the unit from s to ms
 
 
 %% FFT
-y = fft(A1_Out);
-fs = 1000;                               % sample frequency 100Mhz
-F_range = (0:N-1)*(fs/N);
-power = abs(y).^2/N;
+fs = 5000;
+fax_bins = [0 : N-1];
+fax_Hz = fax_bins*(fs/N);
+X_mags = abs(fft(A1_Out));
+N_2 = ceil(N/2);
+figure;
+plot(fax_Hz(1:N_2), X_mags(1:N_2))
 
 
-figure(3)
-plot(F_range,power);
-xlabel('Frequency');
-ylabel('Power');
-
-
-
-
-
+% y = fft(A1_Out);
+% fs = 1000;                               % sample frequency 100Mhz
+% F_range = (0:N-1)*(fs/N);
+% power = abs(y).^2/N;
+% 
+% figure(3)
+% plot(F_range,power);
+% xlabel('Frequency');
+% ylabel('Power');
 
 
