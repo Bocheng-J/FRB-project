@@ -1,21 +1,23 @@
 close all; clear all;
 
 %% Generate signal Vs1
-fs = 7000; % sampling frequency in Hz
+fs = 8000; % sampling frequency in Hz
 f = 1000; % frequency of signal Vs1 in Hz
 A = 1; % amplitude of signal Vs1 in watts
 t = 0:1/fs:1-1/fs;
 Vs1 = A*sin(2*pi*f*t);
-
+N = size(Vs1);
+N = N(2);
 figure;
 plot(t, Vs1);
 title('Time-Domain signal');
 fftVs1 = fft(Vs1)./numel(Vs1);
-fftVs1 = fftshift(fftVs1);
-fr = fs/2*linspace(-1,1,fs);
+%fftVs1 = fftshift(fftVs1);
+%fr = fs/2*linspace(-1,1,fs);
+fr = [0:N-1]*(fs/N);
 
 figure;
-plot(fr, abs(fftVs1));
+plot(fr(1:ceil(N/2)), abs(fftVs1(1:ceil(N/2))));
 title('magnitude FFT of sine');
 xlabel('Frequency (Hz)');
 ylabel('magnitude');
