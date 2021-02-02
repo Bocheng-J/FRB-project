@@ -30,7 +30,7 @@ xlabel('frequency/Hz'); ylabel('magnitude'); grid on;
 % parameter
 G1 = 10;                                                                    % gain in dB
 Ph1 = 45;                                                                   % added phase in 
-Vn1 = -10;                                                                    % added noise in dB
+Vn1 = -10;                                                                  % added noise in dB
 
 % add phase
 Ph1 = Ph1*pi/180;                                                           % convert degree to rad
@@ -72,6 +72,5 @@ plot(fax_Hz(1:ceil(N/2)) ,10*log10(powerAmp1(1:ceil(N/2)))); grid on;       % pl
 title('Output of amplifier A1(power spectrum)');
 xlabel('frequency/Hz'); ylabel('power/dB'); grid on;
 
-%% Adjust SNR
 
 
