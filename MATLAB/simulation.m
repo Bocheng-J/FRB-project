@@ -1,63 +1,77 @@
 close all; clear all;
 
 %% Generate signal Vs1
-fs = 8000; % sampling frequency in Hz
-f = 1000; % frequency of signal Vs1 in Hz
-A = 1; % amplitude of signal Vs1 in watts
-t = 0:1/fs:1-1/fs;
-Vs1 = A*sin(2*pi*f*t);
-N = length(Vs1);
-figure;
-plot(t, Vs1);
-title('Time-Domain signal');
-fftVs1 = fft(Vs1);
-%fftVs1 = fftshift(fftVs1);
-%fr = fs/2*linspace(-1,1,fs);
-fr = [0:N-1]*(fs/N);
+% parameter
+fs = 8000;                                                                  % sampling frequency in Hz
+f = 1000;                                                                   % frequency of signal Vs1 in Hz
+A = 5;                                                                      % amplitude of signal Vs1 in watts
+t = 0:1/fs:1-1/fs;                                                          % length of x-axis
 
+% generate signal Vs1
+Vs1 = A*sin(2*pi*f*t);                                                      
+
+% plot Vs1 in time domain
 figure;
-plot(fr(1:ceil(N/2)), abs(fftVs1(1:ceil(N/2))));
-title('magnitude FFT of sine');
-xlabel('Frequency (Hz)');
-ylabel('magnitude');
+subplot(2,1,1);
+plot(t, Vs1);
+title('Signal Vs1 (time-domain)');
+xlabel('t/s'); ylabel('volt/v'); grid on;
+
+% plot Vs1 in frequency domain
+N = length(Vs1);                                                            % length of signal Vs1
+fftVs1 = fft(Vs1);                                                         
+fax_Hz = (0:N-1)*(fs/N);                                                    % frequency axis
+subplot(2,1,2);
+plot(fax_Hz(1:ceil(N/2)), abs(fftVs1(1:ceil(N/2))));                        % plot single sided frequency spectrum
+title('Signal Vs1 (frequency-domain)');
+xlabel('frequency/Hz'); ylabel('magnitude'); grid on;
 
 %% Amplifier A1
-G1 = 10;                        % voltage gain of A1 in dB
-Ph1 = 45;                      % phase introduced by A1
-Vn1 = 1;                        % noise introduced by A1 in dB
+% parameter
+G1 = 10;                                                                    % gain in dB
+Ph1 = 45;                                                                   % added phase in 
+Vn1 = -10;                                                                    % added noise in dB
 
-Ph1 = Ph1*pi/180; 
-Vs1 = A*sin(2*pi*f*t+Ph1);
-sigPower_Lin = sum(Vs1.^2)/N;       % signal power in watt
-sigPower = 10*log10(sigPower_Lin);  % signal power in dB
-noisePower_Lin = 10^(Vn1/10);           % noise power in watt
-noise = sqrt(noisePower_Lin)*randn(1,N);    % generate noise signal
-A1_Out = Vs1+noise;                 % add noise to signal
-G1_Lin = 10^(G1/20); % convert voltage gain from dB to linear
-A1_Out = A1_Out.* G1_Lin;           % Output of amplifier A1
+% add phase
+Ph1 = Ph1*pi/180;                                                           % convert degree to rad
+Vs1 = A*sin(2*pi*f*t+Ph1);                                                  % add phase to signal Vs1
 
+% add noise
+sigPower = sum(Vs1.^2)/N;                                                   % calculate signal Vs1 power in watt
+sigPower = 10*log10(sigPower);                                              % convert signal power from watt to dB
+noisePower = 10^(Vn1/10);                                                   % calculate noise power in watt
+ampNoise = sqrt(noisePower)*randn(1,N);                                     % generate noise signal
+SNR = snr(Vs1, ampNoise);                                                   % calculate SNR in dB
+Amp1 = Vs1+ampNoise;                                                        % add amplifier noise to signal Vs1
+
+% add gain
+G1 = 10^(G1/20);                                                            % convert voltage gain from dB to linear
+Amp1 = Amp1.* G1;                                                           % amplify signal Vs1
+
+% plot output of amplifier A1 in time domain
 figure;
-plot(t,A1_Out);            % times 1000 to change the unit from s to ms
+subplot(3,1,1);
+plot(t,Amp1); hold on;
+% plot(t,ampNoise); hold on;
+% plot(t,Vs1); hold on;
+title('Output of amplifier A1(time-domain)');
+xlabel('t/s'); ylabel('volt/v'); grid on;
 
+% plot output of amplifier A1 in frequency domain
+fftA1 = fft(Amp1);                                                         
+subplot(3,1,2);
+plot(fax_Hz(1:ceil(N/2)), abs(fftA1(1:ceil(N/2))));                         % plot single sided frequency spectrum
+title('Output of amplifier A1(frequency-domain)');
+xlabel('frequency/Hz'); ylabel('magnitude'); grid on;
 
-fftA1 = fft(A1_Out);
-figure;
-plot(fr(1:ceil(N/2)), abs(fftA1(1:ceil(N/2))));
-title('magnitude FFT of noise');
-xlabel('Frequency (Hz)');
-ylabel('magnitude');
+% plot power spectrum of output of amplifier A1
+absfftA1 = abs(fftA1);                                                      
+powerAmp1 = absfftA1.^2/(N);
+subplot(3,1,3);
+plot(fax_Hz(1:ceil(N/2)) ,10*log10(powerAmp1(1:ceil(N/2)))); grid on;       % plot power spectrum in dB
+title('Output of amplifier A1(power spectrum)');
+xlabel('frequency/Hz'); ylabel('power/dB'); grid on;
 
-Y = abs(fftA1);
-fft_power = Y.^2/(N);      %calculate power
-figure;
-plot(10*log10(fft_power));
-%plot(fft_power);
-title('power spectrum');
-grid on
-
-
-
-
-
+%% Adjust SNR
 
 
