@@ -91,13 +91,32 @@ xlabel('Frequency/MHz'); ylabel('Magnitude');
 subplot(3,1,3);
 Pout_2 = (fft(Vs1).^2);
 Pout_2_db = 10*log10(abs(Pout_2));
-plot((fax_Hz(1:N_2))/1e6, Pout_2_db(1:N_2))                  %% power spectrum calculated by FFT function
+plot((fax_Hz(1:N_2))/1e6, Pout_2_db(1:N_2))                  % power spectrum calculated by FFT function
 str_title6 = sprintf('Signal Power Spectrum: S1+noise+RFI, SNR=%f',SNR);
 title(str_title6);
 xlabel('Frequency/MHz'); ylabel('Power/dB');
 
 
 %%  Quantization
+bitWidth = 2;
+
+figure;             
+posVs1 = Vs1+abs(min(Vs1));                                 % unsigned        
+plot(t,posVs1);
+
+figure;
+quantizedVs1 = round(posVs1*(bitWidth-1));
+plot(t,quantizedVs1);
+% r=ceil(y*(Bit_Width-1));      % 量化，向上取整
+% r=floor(y*(Bit_Width-1));     % 量化，向下取整
+%r=round(y*(Bit_Width-1));       % 量化，四舍五入
+
+fftquantizedVs1 = fft(quantizedVs1);
+tmp = abs(fftquantizedVs1(1:N_2));
+tmp(1,1) = 0;
+
+figure;
+plot((fax_Hz(1:N_2))/1e6, tmp);
 
 
 
