@@ -8,7 +8,7 @@ t = 0:1/fs:0.000004-1/fs;                          % time length : 4us
 
 
 %% generate chirp signal
- X = chirp(t,100e6,0.000002,50e6);                 % linear chirp: at time=0,frequency = 100MHz; at time=2us, frequency = 50MHz.
+X = chirp(t,100e6,0.000002,50e6);                 % linear chirp: at time=0,frequency = 100MHz; at time=2us, frequency = 50MHz.
 figure(1);
 subplot(2,1,1);
 plot(t/1e-6,X);
