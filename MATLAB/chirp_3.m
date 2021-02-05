@@ -100,25 +100,42 @@ xlabel('Frequency/MHz'); ylabel('Power/dB');
 %%  Quantization
 bitWidth = 2;
 
-figure;             
-posVs1 = Vs1+abs(min(Vs1));                                 % unsigned        
-plot(t,posVs1);
+
+posVs1 = Vs1+abs(min(Vs1));                                 % move origin signal above zero    
+% figure;
+% plot(t,posVs1);
+% title('lift signal amplitude baseband');
+% xlabel('t/us'); ylabel('Frequency/MHz'); 
 
 figure;
-quantizedVs1 = round(posVs1*(bitWidth-1));
+subplot(3,1,1);
+quantizedVs1 = round(posVs1*(bitWidth-1));                  % after quantization (in time domain)
 plot(t,quantizedVs1);
-% r=ceil(y*(Bit_Width-1));      % 量化，向上取整
-% r=floor(y*(Bit_Width-1));     % 量化，向下取整
-%r=round(y*(Bit_Width-1));       % 量化，四舍五入
+title('Quantization result: time domain')
+xlabel('t/us'); ylabel('Frequency/MHz'); 
+
+% r=ceil(y*(Bit_Width-1));      % 
+% r=floor(y*(Bit_Width-1));     % ?
+%r=round(y*(Bit_Width-1));       % 
 
 fftquantizedVs1 = fft(quantizedVs1);
-tmp = abs(fftquantizedVs1(1:N_2));
-tmp(1,1) = 0;
+S_AftQuan = abs(fftquantizedVs1(1:N_2));
+S_AftQuan(1,1) = 0;
 
-figure;
-plot((fax_Hz(1:N_2))/1e6, tmp);
+subplot(3,1,2);
+plot((fax_Hz(1:N_2))/1e6, S_AftQuan);                            % after quantization (in frequency domain)
+title('Quantization result: frequency domain')
+xlabel('Frequency/MHz'); ylabel('Magnitude');
+
+subplot(3,1,3);
+Pout_AftQuan = (S_AftQuan.^2);
+Pout_db_AftQuan = 10*log10(abs(Pout_AftQuan));
+plot((fax_Hz(1:N_2))/1e6, Pout_db_AftQuan(1:N_2))                  % power spectrum calculated by FFT function
+SNR_AftQuan = 6.02*bitWidth + 1.76;                                         % calculate SNR 
+str_title7 = sprintf('Quantization result: Power Spectrum, SNR(ideal)=%f', SNR_AftQuan);
+title(str_title7);
+xlabel('Frequency/MHz'); ylabel('Power/dB');
 
 
-
-
+%% Tuning 
 
