@@ -132,6 +132,8 @@ Pout_AftQuan = (S_AftQuan.^2);
 Pout_db_AftQuan = 10*log10(abs(Pout_AftQuan));
 plot((fax_Hz(1:N_2))/1e6, Pout_db_AftQuan(1:N_2))                  % power spectrum calculated by FFT function
 SNR_AftQuan = 6.02*bitWidth + 1.76;                                         % calculate SNR 
+disp_snr_AftQuan = sprintf('SQNR(ideal) = %f', SNR_AftQuan);
+disp(disp_snr_AftQuan);
 str_title7 = sprintf('Quantization result: Power Spectrum, SNR(ideal)=%f', SNR_AftQuan);
 title(str_title7);
 xlabel('Frequency/MHz'); ylabel('Power/dB');
