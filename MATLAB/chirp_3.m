@@ -167,3 +167,5 @@ str_title7 = sprintf('Quantization result: Power Spectrum, SNR(ideal)=%f dB', SN
 title(str_title7);
 xlabel('Frequency/MHz'); ylabel('Power/dB');
 
+%test
+
