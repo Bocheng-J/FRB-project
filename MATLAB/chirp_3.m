@@ -62,7 +62,7 @@ xlabel('Frequency/MHz'); ylabel('Power/dB');
 % Vn1 = 0;                                        % noise introduced by A1 in dB
 % noisePower_Lin = 10^(Vn1/10);                   % noise power in watt
 %noise = 0.1*randn(1,N);        % generate noise signal
-noise = rand(1,N)*0.1;
+noise = randn(1,N)*0.1;
 
 f_rfi = 45e6;                         % RFI frequency: 60M hz
 S_rfi = 0.1*sin(2*pi*f_rfi*t);       % RFI at 60 MHz
@@ -101,9 +101,7 @@ xlabel('Frequency/MHz'); ylabel('Power/dB');
 % Down conversion mixer
 flo = 30e6;
 LO = sin(2*pi*flo*t);
-
 tunnedVs1 = Vs1.*LO;
-
 ffttunnedVs1 = fft(tunnedVs1);
 
 figure;
@@ -155,11 +153,11 @@ plot((fax_Hz(1:N_2))/1e6, Pout_db_AftQuan(1:N_2))                  % power spect
 
 SNR_AftQuan = 6.02*bitWidth + 1.76;                                         % calculate SNR 
 %Q_level = max(posVs1)-min(posVs1);                                          % calculate quantization level
-Q_level = 2 + 0.2 + 0.2;
-Q_noise = 2.4/(12)^0.5;                                                 % calculate Quantization noise
-Q_noise_db = 10*log10(Q_noise);                                             
-disp_qnoise = sprintf('Quantization noise = %f dB', Q_noise_db);
-disp(disp_qnoise);
+% Q_level = 2 + 0.2 + 0.2;
+% Q_noise = 2.4/(12)^0.5;                                                 % calculate Quantization noise
+% Q_noise_db = 10*log10(Q_noise);                                             
+% disp_qnoise = sprintf('Quantization noise = %f dB', Q_noise_db);
+% disp(disp_qnoise);
 disp_snr_AftQuan = sprintf('SQNR(ideal) = %f dB', SNR_AftQuan);
 disp(disp_snr_AftQuan);
 
@@ -167,5 +165,5 @@ str_title7 = sprintf('Quantization result: Power Spectrum, SNR(ideal)=%f dB', SN
 title(str_title7);
 xlabel('Frequency/MHz'); ylabel('Power/dB');
 
-%test
+% 0205-1421
 
