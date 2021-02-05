@@ -8,11 +8,7 @@ t = 0:1/fs:0.000004-1/fs;                          % time length : 4us
 
 
 %% generate chirp signal
-<<<<<<< HEAD
-X = chirp(t,100e6,0.000002,50e6);                 % linear chirp: at time=0,frequency = 100MHz; at time=2us, frequency = 50MHz.
-=======
 X = chirp(t,50e6,0.000004,40e6);                 % linear chirp: at time=0,frequency = 100MHz; at time=2us, frequency = 50MHz.
->>>>>>> xiaochen
 figure(1);
 subplot(2,1,1);
 plot(t/1e-6,X);
@@ -108,52 +104,6 @@ LO = sin(2*pi*flo*t);
 
 tunnedVs1 = Vs1.*LO;
 
-<<<<<<< HEAD
-posVs1 = Vs1+abs(min(Vs1));                                 % move origin signal above zero    
-% figure;
-% plot(t,posVs1);
-% title('lift signal amplitude baseband');
-% xlabel('t/us'); ylabel('Frequency/MHz'); 
-
-figure;
-subplot(3,1,1);
-quantizedVs1 = round(posVs1*(bitWidth-1));                  % after quantization (in time domain)
-plot(t,quantizedVs1);
-title('Quantization result: time domain')
-xlabel('t/us'); ylabel('Frequency/MHz'); 
-
-% r=ceil(y*(Bit_Width-1));      % 
-% r=floor(y*(Bit_Width-1));     % ?
-%r=round(y*(Bit_Width-1));       % 
-
-fftquantizedVs1 = fft(quantizedVs1);
-S_AftQuan = abs(fftquantizedVs1(1:N_2));
-S_AftQuan(1,1) = 0;
-
-subplot(3,1,2);
-plot((fax_Hz(1:N_2))/1e6, S_AftQuan);                            % after quantization (in frequency domain)
-title('Quantization result: frequency domain')
-xlabel('Frequency/MHz'); ylabel('Magnitude');
-
-subplot(3,1,3);
-Pout_AftQuan = (S_AftQuan.^2);
-Pout_db_AftQuan = 10*log10(abs(Pout_AftQuan));
-plot((fax_Hz(1:N_2))/1e6, Pout_db_AftQuan(1:N_2))                  % power spectrum calculated by FFT function
-
-SNR_AftQuan = 6.02*bitWidth + 1.76;                                         % calculate SNR 
-%Q_level = max(posVs1)-min(posVs1);                                          % calculate quantization level
-Q_level = 2 + 0.2 + 0.2;
-Q_noise = 2.4/(12)^0.5;                                                 % calculate Quantization noise
-Q_noise_db = 10*log10(Q_noise);                                             
-disp_qnoise = sprintf('Quantization noise = %f dB', Q_noise_db);
-disp(disp_qnoise);
-disp_snr_AftQuan = sprintf('SQNR(ideal) = %f dB', SNR_AftQuan);
-disp(disp_snr_AftQuan);
-
-str_title7 = sprintf('Quantization result: Power Spectrum, SNR(ideal)=%f dB', SNR_AftQuan);
-title(str_title7);
-xlabel('Frequency/MHz'); ylabel('Power/dB');
-=======
 ffttunnedVs1 = fft(tunnedVs1);
 
 figure;
@@ -192,16 +142,12 @@ xlabel('t/us'); ylabel('Frequency/MHz');
 fftquantizedVs1 = fft(quantizedVs1);
 S_AftQuan = abs(fftquantizedVs1(1:N_2));
 S_AftQuan(1,1) = 0;
->>>>>>> xiaochen
 
 subplot(3,1,2);
 plot((fax_Hz(1:N_2))/1e6, S_AftQuan);                            % after quantization (in frequency domain)
 title('Quantization result: frequency domain')
 xlabel('Frequency/MHz'); ylabel('Magnitude');
 
-<<<<<<< HEAD
-%% Tuning 
-=======
 subplot(3,1,3);
 Pout_AftQuan = (S_AftQuan.^2);
 Pout_db_AftQuan = 10*log10(abs(Pout_AftQuan));
@@ -220,6 +166,6 @@ disp(disp_snr_AftQuan);
 str_title7 = sprintf('Quantization result: Power Spectrum, SNR(ideal)=%f dB', SNR_AftQuan);
 title(str_title7);
 xlabel('Frequency/MHz'); ylabel('Power/dB');
->>>>>>> xiaochen
 
+%test
 
