@@ -222,5 +222,8 @@ title(str_title7);
 xlabel('Frequency/MHz'); ylabel('Power/dB');
 >>>>>>> xiaochen
 
+<<<<<<< HEAD
 %test
+=======
+>>>>>>> dd9c6bf504819e4f06e895bced196d9a1b9250b6
 
