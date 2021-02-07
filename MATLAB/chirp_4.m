@@ -164,7 +164,7 @@ plot(corr);
 title('Correlation result');
 
 [tmp, Tmax] = max(corr);                                               % find the most matched point
-Tx_hat = Tmax-length(refVs1)                                           % calculate time delay of the most matched point
+Tx_hat = Tmax-length(refVs1) ;                                          % calculate time delay of the most matched point
 
 N = length(corr);
 N_2 = ceil(N/2);
@@ -225,9 +225,9 @@ SNR_AftQuan = 6.02*bitWidth + 1.76;                                         % ca
 disp_snr_AftQuan = sprintf('SQNR(ideal) = %f dB', SNR_AftQuan);
 disp(disp_snr_AftQuan);
 
-str_title7 = sprintf('Quantization result: Power Spectrum, SNR(ideal)=%f dB', SNR_AftQuan);
+str_title7 = sprintf('Quantization result: Power Spectrum, SQNR(ideal)=%f dB', SNR_AftQuan);
 title(str_title7);
 xlabel('Frequency/MHz'); ylabel('Power/dB');
 
-% 0207-1823
+% 0207-1829
 
