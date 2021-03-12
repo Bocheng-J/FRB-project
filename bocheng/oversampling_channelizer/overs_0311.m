@@ -1,6 +1,8 @@
 clc;
 clear;
 close all;
+%2021-0312-1408
+
 
 %% prototype filter
 h0=remez(70,[0 0.5 1.5 6]/6,{'myfrf',[1 1 0 0]},[1 1]);  % prototype filter
