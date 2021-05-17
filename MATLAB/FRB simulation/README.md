@@ -1,10 +1,10 @@
 # FRB simulation
 
-#How to run?
+# How to run?
 Download all matlab scripts, then run 'chirp_moving.m'
 
 
-#Script Description:
+# Script Description:
 Script: FRB capture system simulation
 
 Feature: Do digital signal processing for the input signal,find target FRB/chirp, save snapshot of the candidate
