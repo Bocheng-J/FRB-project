@@ -18,13 +18,13 @@ close all;
 
 
 %% General settings
-noise_level = 0.8603;           % SNR -2: 1.585; SNR 0: 1.261; SNR 3 : 0.8603; SNR 5: 0.715
-trigger_level = 10;             % in which SNR level to trigger (in dB) 
+noise_level = 1.4*1e16;           % SNR -2: 1.585; SNR 0: 1.261; SNR 3 : 0.8603; SNR 5: 0.715
+trigger_level = 25;             % in which SNR level to trigger (in dB) 
 trigger_time = 0;               % create a variable to save the time of triggering, default: 0 
 trigger_flag = 0;               % indicate trigger or not, when trigger_flag~= 0, we have the trigger
 trigger_number = 0;             % record how many times it was triggered
 shift_number = 1;               % check how many times of shift is performed
-average_factor = 55;            % moving average span. (only allow odd number)
+average_factor = 97;            % moving average span. (only allow odd number), better to be close to multiples of 16
 
 
 %% generate input signal
@@ -46,6 +46,9 @@ t = 0:t_samp:(length_extra+length(chirp_sig)-1)*1/fs;                        % t
 input_SNR = 3;                                    % Set input SNR
 sig = awgn(sig,input_SNR,'measured');             % Add noise
 
+% convert floating point data to binary integer data
+sig = round((sig*2^16)/4);
+
 % plots
 %myspectro(sig,128,f_start,f_stop);                % Time vs frequency
 plotPlus(sig,t,fs,'chirp');                       % plot in time domain & frequency domain
@@ -65,6 +68,7 @@ M = 32;                                                   % channel number
 D = 16;                                                   % decimation number
 load('lp_125G_32ch_2');                                   % load prototype filter coefficients
 h = reshape(lp_125G_32ch_2,M,[]);
+h = round(h * 2^15 -1);
 x = [sig_downsp ];                                        % get the downsampled signal as PFB input
 
 % PFB initialization
@@ -171,11 +175,13 @@ for n=1:D:length(x)-M
         flag = 0;
         filtOutBuf = [filtOutBuf(D+1:M);filtOutBuf(1:D)];
     end
-    chanOut = M*ifft(filtOutBuf);
+    %chanOut = M*ifft(filtOutBuf);
+    chanOut = round(M*ifft(filtOutBuf));
     chanOutBuf(:,mm) = (chanOut);
     
     % moving average PFB output
-input = abs(chanOutBuf);
+input = (abs(chanOutBuf)).^2;
+%input = abs(chanOutBuf);
 if (mm<= average_factor) 
     if (count ==1 )
         temp_vec = zeros(M,mm);
@@ -183,7 +189,8 @@ if (mm<= average_factor)
                 temp_vec(:,j) = input(:,j);
             end   
         temp_addition = cumsum(temp_vec,2);
-        chanOutBuf_average(:,(mm+1)/2) = temp_addition(:,mm)/(mm);
+        %chanOutBuf_average(:,(mm+1)/2) = temp_addition(:,mm)/(mm);
+        chanOutBuf_average(:,(mm+1)/2) = round(temp_addition(:,mm)/(mm));
         count = count + 1;
         
      %% shift
@@ -226,7 +233,8 @@ if (mm<= average_factor)
     end
 else                                                                       
     current_index = mm-(average_factor-1)/2;
-    chanOutBuf_average(:,current_index) = (average_factor*chanOutBuf_average(:,current_index-1)+input(:,current_index+p)-input(:,current_index-q))/average_factor;
+    %chanOutBuf_average(:,current_index) = (average_factor*chanOutBuf_average(:,current_index-1)+input(:,current_index+p)-input(:,current_index-q))/average_factor;
+    chanOutBuf_average(:,current_index) = round((average_factor*chanOutBuf_average(:,current_index-1)+input(:,current_index+p)-input(:,current_index-q))/average_factor);
      %% shift
      dedisp_sig_16 = ArrayDisplacement(dedisp_sig_16,2,1,2);
      dedisp_sig_15 = ArrayDisplacement(dedisp_sig_15,2,1,2);
@@ -301,8 +309,8 @@ else
     trigger_flag = 0;
 end
 
-if trigger_flag == 1
-        trigger_time = mm*(1/fs3)/1e-6;               % save the first trigger time, unit: us
+if trigger_flag == 3                                  % only when we have 3 consecutive triggers, we consider there is a valid trigger
+        trigger_time = mm*(1/fs3)/1e-6;               % save the trigger time, unit: us
 end
 
 %% dynamic plot
@@ -352,8 +360,9 @@ end
 
 
 %% capture candidate snapshot
+extra_factor= 0.2;                                        % to save a snapshot longer than target signal length (to add some buffer so as not to miss any target signal)
 % get start time of snapshot
-snapshot_start = trigger_time*1e-6 - T_tot;
+snapshot_start = trigger_time*1e-6 - T_tot - T_tot*extra_factor;
 start_index = ceil(snapshot_start/(1/fs2));               % transfer start time to vector index
 if snapshot_start <= 0                                   
     snapshot_start = 0;
@@ -361,7 +370,6 @@ if snapshot_start <= 0
 end
 
 % get end time of snapshot
-extra_factor= 0.2;                                         % to save a snapshot longer than target signal length (to add some buffer so as not to miss any target signal)
 snapshot_end = trigger_time*1e-6 + T_tot*extra_factor;
 end_index = ceil(snapshot_end/(1/fs2));                    % transfer end time to vector index
 if snapshot_end > sig_length                               % if snapshot_end exceed the length of the raw signal
@@ -371,7 +379,7 @@ end
 
 % get snapshot
 snapshot = sig_downsp(start_index:end_index);
-snapshot_t = 0:1/fs2:snapshot_end-1/fs2;
+snapshot_t = 0:1/fs2:(end_index-start_index)*1/fs2;
 plotPlus(snapshot,snapshot_t,fs2,'Candidate snapshot');
 
 
